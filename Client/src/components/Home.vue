@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import jwtDecode from 'jwt-decode';
+import VueJwtDecode from 'vue-jwt-decode';
 import api from '@/services/Api';
 
 export default {
@@ -82,6 +82,7 @@ export default {
             newPostText: '',
             profile: {
                 name: '',
+                userId: '',
                 role: 'Web developer',
                 profileViews: 52
             },
@@ -112,8 +113,11 @@ export default {
             const token = localStorage.getItem('token');
             if (token) {
                 try {
-                    const decoded = jwtDecode(token);
-                    return decoded.username;
+                    const decoded = VueJwtDecode.decode(token);
+                    return {
+                        username: decoded.username, // Pastikan 'username' ada di decoded
+                        userId: decoded.userId // Pastikan 'userId' ada di decoded
+                    };
                 } catch (error) {
                     console.error('Error decoding token:', error);
                     return null;
@@ -123,9 +127,10 @@ export default {
         }
     },
     mounted() {
-        const username = this.getUserFromToken();
-        if (username) {
-            this.profile.name = username;
+        const user = this.getUserFromToken();
+        if (user) {
+            this.profile.name = user.username;
+            this.profile.userId = user.userId;
         }
     }
 };
