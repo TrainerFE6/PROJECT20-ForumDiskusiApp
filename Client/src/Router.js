@@ -30,4 +30,9 @@ router.beforeEach((to, from, next) => {
   }
 });
 
+// Tambahkan fungsi untuk menghapus token saat logout
+export function logout() {
+  localStorage.removeItem('token');
+}
+
 export default router;

@@ -73,7 +73,7 @@
 
 <script>
 import jwtDecode from 'jwt-decode';
-import AuthenticationServices from '../services/AuthenticationServices';
+import api from '@/services/Api';
 
 export default {
     data() {
@@ -101,7 +101,7 @@ export default {
         },
         async logout() {
             try {
-                await AuthenticationServices.logout();
+                await api.post('login/logout'); 
                 localStorage.removeItem('token');
                 this.$router.push('/login');
             } catch (error) {

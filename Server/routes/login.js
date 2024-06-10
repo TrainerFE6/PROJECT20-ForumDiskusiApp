@@ -5,4 +5,6 @@ const verifyUser = require('../library/verify');
 
 router.post('/', verifyUser.isLogout, loginController.loginAuth);
 
+router.post('/logout', loginController.logout);
+
 module.exports = router;
