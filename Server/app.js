@@ -14,6 +14,7 @@ const usersRouter = require('./routes/users');
 const sessionRouter = require('./routes/session');
 const loginRoutes = require('./routes/login');
 const registerRoutes = require('./routes/register');
+const postRoutes = require('./routes/post_content');
 
 // Middleware
 const verifyUser = require('./library/verify');
@@ -48,6 +49,7 @@ app.use('/api/users', usersRouter);
 app.use('/session', sessionRouter);
 app.use('/register', registerRoutes);
 app.use('/login', loginRoutes);
+app.use('/content', postRoutes);
 
 // Protect the routes
 app.use('/home', verifyUser.isLogin, (req, res) => {

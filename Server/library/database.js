@@ -18,4 +18,4 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
-module.exports = pool.promise(); // Menggunakan .promise() untuk menggunakan API berbasis Promise
+module.exports = pool.promise();

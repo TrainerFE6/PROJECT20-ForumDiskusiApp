@@ -26,7 +26,7 @@ module.exports = {
                 // Hash password dan simpan user baru
                 const hashedPassword = await bcrypt.hash(password, 10);
                 await connection.execute(
-                    'INSERT INTO user (username, email, password) VALUES (?, ?, ?)',
+                    'INSERT INTO user (username, email, password, created_at) VALUES (?, ?, ?, NOW())',
                     [username, email, hashedPassword]
                 );
 
