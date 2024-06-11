@@ -1,10 +1,12 @@
-<template>
+<!-- <template>
     <div class="container">
         <div class="left-sidebar">
             <div class="sidebar-profile-box">
                 <img src="./img/cover-pic.png" alt="" width="100%">
                 <div class="sidebar-profile-info">
-                    <img src="./img/user-1.png" alt="">
+                    <router-link to="/home-user">
+                        <img src="./img/user-1.png" alt="">
+                    </router-link>
                     <h1>{{ profile.name }}</h1>
                     <h3>Web developer</h3>
                     <ul>
@@ -325,4 +327,4 @@ export default {
 
 
 
-</style>
+</style> -->

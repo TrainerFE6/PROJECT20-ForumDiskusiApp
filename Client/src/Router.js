@@ -2,13 +2,16 @@ import { createRouter, createWebHistory } from 'vue-router';
 import LandingPage from './components/LendingPage.vue';
 import Login from './components/Login.vue';
 import Register from './components/Register.vue';
-import HomePage from './components/Home.vue';
+import HomeUsers from './components/HomeUsers.vue';
+import Home from './components/Home.vue';
+import HomePage from './components/HomePage.vue';
 
 const routes = [
   { path: '/', component: LandingPage },
   { path: '/login', component: Login, meta: { requiresGuest: true } },
   { path: '/register', component: Register, meta: { requiresGuest: true } },
   { path: '/home', component: HomePage, meta: { requiresAuth: true } },
+  { path: '/home-user', component: HomeUsers, meta: {requiresAuth: true}},
 ];
 
 const router = createRouter({
