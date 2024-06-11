@@ -3,13 +3,13 @@
         <div class="create-post-input">
             <img src="./img/user-1.png" />
             <div class="user-info">
-                <p class="username">Dhika</p>
-                <p class="role">Konten Kreator</p>
+                <p class="username">{{Profile.Username}}</p>
+                <p class="role">{{Profile.Job}}</p>
             </div>
         </div>
         <div class="main-card">
-            <h8 class="title">Bagaimana Cara Aku Jago?</h8>
-            <p class="content">1. ......</p>
+            <h8 class="title">{{Profile.Title}}</h8>
+            <p class="content">{{Profile.Content}}</p>
         </div>
         <div class="bottom-card">
             <font-awesome-icon :icon="['fas', 'comments']" class="icon" />
@@ -21,7 +21,17 @@
 
 <script>
 export default {
-    name: 'Card'
+    name: 'Card',
+    data() {
+        return {
+            Profile: {
+                Username: 'Dhika',
+                Job: 'Konten Kreator',
+                Title: 'Bagaimana cara aku jago?',
+                Content: '1. Lorem Ipsum'
+            }
+        };
+    }
 };
 </script>
 
