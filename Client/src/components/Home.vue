@@ -1,4 +1,4 @@
-<!-- <template>
+<template>
     <div class="container">
         <div class="left-sidebar">
             <div class="sidebar-profile-box">
@@ -327,4 +327,4 @@ export default {
 
 
 
-</style> -->
+</style>
