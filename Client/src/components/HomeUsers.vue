@@ -29,7 +29,7 @@
                         <img src="./image/help.png" alt="">
                         Help
                     </a>
-                    <a href="">
+                    <a href="#" @click.prevent="logout">
                         <img src="./image/logout.png" alt="">
                         Log out
                     </a>
@@ -106,6 +106,8 @@
   </template>
   
   <script>
+  import api from '@/services/Api';
+
   export default {
     name: 'ContainerContent',
     data() {
@@ -164,7 +166,15 @@
           alert('Silakan masukkan komentar!');
         }
       },
-
+      async logout() {
+          try {
+              await api.post('login/logout'); 
+              localStorage.removeItem('token');
+              this.$router.push('/login');
+          } catch (error) {
+              console.error('Error during logout:', error);
+          }
+      },
     }
   };
   </script>

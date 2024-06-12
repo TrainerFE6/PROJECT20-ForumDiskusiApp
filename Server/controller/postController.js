@@ -23,13 +23,48 @@ const addContent = async (req, res) => {
     }
 };
 
-const getAllContent = async (req, res) => {
-    const { category } = req.params;
+const updateMyContent = async (req, res) => {
+    const { content_text, content_id } = req.body;
 
     try {
+        const [result] = await pool.query(
+            'UPDATE content SET content_text = ? WHERE cntent_id = ?',
+            [content_text, content_id]
+        );
+
+        res.status(201).json({
+            message: 'Content added successfully',
+            content_id: result.insertId,
+        });
+    } catch (error) {
+        console.error('Error adding content:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+const deleteMyContent = async (req, res) => {
+    const { content_id } = req.body;
+
+    try {
+        const [result] = await pool.query(
+            'DELETE FROM content WHERE content_id = ?',
+            [content_id]
+        );
+
+        res.status(201).json({
+            message: 'Content added successfully',
+            content_id: result.insertId,
+        });
+    } catch (error) {
+        console.error('Error adding content:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+const getAllContent = async (req, res) => {
+    try {
         const [rows] = await pool.query(
-            'SELECT * FROM content WHERE category = ? ORDER BY upload_time DESC',
-            [category]
+            'SELECT * FROM content ORDER BY upload_time DESC'
         );
         res.json(rows);
     } catch (error) {
@@ -78,6 +113,8 @@ const addRespond = async (req, res) => {
 
 module.exports = {
     addContent,
+    updateMyContent,
+    deleteMyContent,
     getAllContent,
     getMyContent,
     addRespond,

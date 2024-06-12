@@ -7,8 +7,14 @@ const post_content = require('../controller/postController');
 router.post('/add', post_content.addContent);
 // router.post('/add', verifyUser.isLogin, post_content.addContent);
 
+// Update Postingan
+router.put('/update_content', post_content.updateMyContent);
+
+// Hapus Postingan
+router.delete('/delete/:content_id', post_content.deleteMyContent);
+
 // Ambil data postingan
-router.get('/all/:category', post_content.getAllContent);
+router.get('/all_post', post_content.getAllContent);
 
 // Ambil Semua Postingan Saya
 router.get('/mypost/:sender_id', post_content.getMyContent);

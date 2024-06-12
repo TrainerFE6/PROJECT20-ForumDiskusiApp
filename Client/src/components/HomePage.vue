@@ -19,28 +19,32 @@
                 </div>
             </div>
             <div class="main-content">
-                <div class="create-post">
-                    <div class="create-post-input">
-                        <img src="./img/user-1.png"/>
-                        <textarea rows="2" placeholder="..."></textarea>
+                <form @submit.prevent="addPost">
+                    <div class="create-post">
+                        <div class="create-post-input">
+                            <img src="./img/user-1.png"/>
+                            <textarea rows="2" placeholder="..." v-model="newPostText"></textarea>
+                        </div>
+                        <div class="create-post-links">
+                            <button type="submit">
+                                <font-awesome-icon :icon="['fas', 'images']" />
+                                <span class="button-text">Image</span>
+                            </button>
+                            <button type="submit">
+                                <font-awesome-icon :icon="['fas', 'video']" />
+                                <span class="button-text">Video</span>
+                            </button>
+                            <button></button>
+                            <button type="submit" >
+                                <font-awesome-icon :icon="['fas', 'paper-plane']" />
+                                <span class="button-text">Submit</span>
+                            </button>
+                        </div>
                     </div>
-                    <div class="create-post-links">
-                        <button type="submit" @click="logout">
-                            <font-awesome-icon :icon="['fas', 'images']" />
-                            <span class="button-text">Image</span>
-                        </button>
-                        <button type="submit">
-                            <font-awesome-icon :icon="['fas', 'video']" />
-                            <span class="button-text">Video</span>
-                        </button>
-                        <button></button>
-                        <button>
-                            <font-awesome-icon :icon="['fas', 'paper-plane']" />
-                            <span class="button-text">Submit</span>
-                        </button>
-                    </div>
-                </div>
-            <Card/>
+                </form>
+            <div v-for="(post, index) in posts" :key="index">
+                <Card :profile="post"/>
+            </div>
             </div>
         </div>
     </div>
@@ -61,34 +65,44 @@ export default {
     data() {
         return {
             posts: [],
-            newPostText: '',
+            newPostText: '', // To store the text of the new post
             profile: {
                 name: '',
                 userId: '',
                 role: 'Web developer',
                 profileViews: 52
             },
-            trendingTopics: ['#taqqqqqq', '#taqqqqqq', '#taqqqqqq', '#taqqqqqq', '#taqqqqqq']
+            trendingTopics: ['#taqqqqqq', '#taqqqqqq', '#taqqqqqq', '#taqqqqqq', '#taqqqqqq'],
+            loading: false
         };
     },
     methods: {
-        addPost() {
-            if (this.newPostText.trim() !== '') {
-                this.posts.unshift({
-                    text: this.newPostText,
-                    author: this.profile.name,
-                    timestamp: new Date().toLocaleString()
-                });
-                this.newPostText = '';
+        async addPost() {
+            if (!this.newPostText.trim()) {
+                alert('Please enter some text for your post.');
+                return;
             }
-        },
-        async logout() {
+
+            this.loading = true; // Set loading state to true
+
             try {
-                await api.post('login/logout'); 
-                localStorage.removeItem('token');
-                this.$router.push('/login');
+                const response = await api.post('/content/add', {
+                    sender_id: this.profile.userId,
+                    sender_name: this.profile.name,
+                    content_text: this.newPostText,
+                    category: 'General' // Assuming a default category
+                });
+
+                console.log('Response received:', response.data); // Log the response from the backend
+
+                this.newPostText = ''; // Clear the new post text field
+                alert('Content added successfully!');
+                window.location.reload(); // Refresh the page
             } catch (error) {
-                console.error('Error during logout:', error);
+                console.error('Error during upload:', error.response ? error.response.data : error.message);
+                alert('Failed to add content. Please try again.');
+            } finally {
+                this.loading = false; // Reset loading state
             }
         },
         getUserFromToken() {
@@ -106,7 +120,20 @@ export default {
                 }
             }
             return null;
-        }
+        },
+        async fetchPosts() {
+            try {
+                const response = await api.get('/content/all_post');
+                this.posts = response.data.map(post => ({
+                    username: post.sender_name,
+                    job: post.category, // You can modify this if you have job titles in your post data
+                    // title: post.title || 'No Title',
+                    content: post.content_text
+                }));
+            } catch (error) {
+                console.error('Error fetching posts:', error);
+            }
+        },
     },
     mounted() {
         const user = this.getUserFromToken();
@@ -114,6 +141,7 @@ export default {
             this.profile.name = user.username;
             this.profile.userId = user.userId;
         }
+        this.fetchPosts(); // Fetch posts when the component is mounted
     }
 };
 </script>

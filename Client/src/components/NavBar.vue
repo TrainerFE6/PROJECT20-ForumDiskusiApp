@@ -27,7 +27,7 @@
         </div>
         <div class="navbar-right">
             <div class="online">
-                <img src="./img/user-1.png" class="nav-profile-img"/>
+                <router-link to="/home-user"><img src="./img/user-1.png" class="nav-profile-img"/></router-link>
             </div>
         </div>
     </nav>

@@ -3,13 +3,13 @@
         <div class="create-post-input">
             <img src="./img/user-1.png" />
             <div class="user-info">
-                <p class="username">{{Profile.Username}}</p>
-                <p class="role">{{Profile.Job}}</p>
+                <p class="username">{{ profile.username }}</p>
+                <p class="role">{{ profile.job }}</p>
             </div>
         </div>
         <div class="main-card">
-            <h8 class="title">{{Profile.Title}}</h8>
-            <p class="content">{{Profile.Content}}</p>
+            <!-- <h8 class="title">{{ profile.title }}</h8> -->
+            <p class="content">{{ profile.content }}</p>
         </div>
         <div class="bottom-card">
             <font-awesome-icon :icon="['fas', 'comments']" class="icon" />
@@ -22,18 +22,15 @@
 <script>
 export default {
     name: 'Card',
-    data() {
-        return {
-            Profile: {
-                Username: 'Dhika',
-                Job: 'Konten Kreator',
-                Title: 'Bagaimana cara aku jago?',
-                Content: '1. Lorem Ipsum'
-            }
-        };
+    props: {
+        profile: {
+            type: Object,
+            required: true
+        }
     }
 };
 </script>
+
 
 <style>
 .card {
@@ -51,6 +48,7 @@ export default {
     padding: 10px;
     background-color: #f9f9f9;
     border-bottom: 1px solid #eee;
+    margin-bottom: 0;
 }
 
 .create-post-input img {
@@ -78,7 +76,7 @@ export default {
 }
 
 .main-card {
-    padding: 15px;
+    /* padding: 5px; */
     border-bottom: 1px solid #eee;
 }
 
