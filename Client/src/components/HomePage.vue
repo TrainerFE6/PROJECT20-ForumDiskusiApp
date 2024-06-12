@@ -42,9 +42,9 @@
                         </div>
                     </div>
                 </form>
-            <div v-for="(post, index) in posts" :key="index">
-                <Card :profile="post"/>
-            </div>
+                <div v-for="post in posts" :key="post.id">
+                    <Card :content="post" :profile="profile"/>
+                </div>
             </div>
         </div>
     </div>
@@ -125,10 +125,11 @@ export default {
             try {
                 const response = await api.get('/content/all_post');
                 this.posts = response.data.map(post => ({
+                    postId: post.content_id,
+                    userId: post.sender_id,
                     username: post.sender_name,
-                    job: post.category, // You can modify this if you have job titles in your post data
-                    // title: post.title || 'No Title',
-                    content: post.content_text
+                    content: post.content_text,
+                    job: post.category
                 }));
             } catch (error) {
                 console.error('Error fetching posts:', error);

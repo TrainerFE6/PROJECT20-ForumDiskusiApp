@@ -89,16 +89,16 @@ const getMyContent = async (req, res) => {
 };
 
 const addRespond = async (req, res) => {
-    const { content_id, responder_id, responder_name, respond_text } = req.body;
+    const { post_id, sender_id, sender_name, comment_text } = req.body;
 
-    if (!content_id || !responder_id || !responder_name || !respond_text) {
+    if (!post_id || !sender_id || !sender_name || !comment_text) {
         return res.status(400).json({ error: 'Missing required fields' });
     }
 
     try {
         const [result] = await pool.query(
-            'INSERT INTO respond (content_id, responder_id, responder_name, respond_text, upload_time) VALUES (?, ?, ?, ?, NOW())',
-            [content_id, sender_id, sender_name, respond_text]
+            'INSERT INTO comments (post_id, sender_id, sender_name, comment_text, upload_time) VALUES (?, ?, ?, ?, NOW())',
+            [post_id, sender_id, sender_name, comment_text]
         );
 
         res.status(201).json({
@@ -109,7 +109,22 @@ const addRespond = async (req, res) => {
         onsole.error('Error adding content:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-}
+};
+
+const getRespond = async (req, res) => {
+    const { postId } = req.params;
+
+    try {
+        const [comments] = await pool.query(
+            'SELECT * FROM comments WHERE post_id = ? ORDER BY upload_time ASC',
+            [postId]
+        );
+        res.json(comments);
+    } catch (error) {
+        console.error('Error fetching content by category:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
 module.exports = {
     addContent,
@@ -118,4 +133,5 @@ module.exports = {
     getAllContent,
     getMyContent,
     addRespond,
+    getRespond,
 };

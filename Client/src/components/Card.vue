@@ -3,30 +3,99 @@
         <div class="create-post-input">
             <img src="./img/user-1.png" />
             <div class="user-info">
-                <p class="username">{{ profile.username }}</p>
-                <p class="role">{{ profile.job }}</p>
+                <p class="username">{{ content.username }}</p>
+                <p class="role">{{ content.job }}</p>
             </div>
         </div>
         <div class="main-card">
             <!-- <h8 class="title">{{ profile.title }}</h8> -->
-            <p class="content">{{ profile.content }}</p>
+            <p class="content">{{ content.content }}</p>
         </div>
-        <div class="bottom-card">
+        <!-- <div class="bottom-card">
             <font-awesome-icon :icon="['fas', 'comments']" class="icon" />
             <textarea rows="1" class="card-text" placeholder="Comments"></textarea>
             <button class="send-button">Send</button>
+        </div> -->
+        <div class="bottom-card">
+            <div class="comments-section">
+                <div v-for="(comment, index) in comments" :key="index" class="comment-item">
+                    <Comment :senderName="comment.senderName" :commentText="comment.text" />
+                </div>
+            </div>
+            <div class="comment-box">
+                <textarea rows="1" class="card-text" v-model="newCommentText" placeholder="Add a comment"></textarea>
+                <button class="send-button" @click="addComment">Add Comment</button>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+import Comment from './Comment.vue';
+import api from '@/services/Api';
+
 export default {
     name: 'Card',
+    components: {
+        Comment
+    },
     props: {
+        content: {
+            type: Object,
+            required: true
+        },
         profile: {
             type: Object,
             required: true
         }
+    },
+    data() {
+        return {
+            comments: [], // Array untuk menyimpan komentar
+            newCommentText: '' // Untuk menyimpan teks komentar baru
+        };
+    },
+    methods: {
+        async fetchComments() {
+            try {
+                const response = await api.get(`/content/comments/${this.content.postId}`);
+                console.log('Comments fetched:', response.data);
+                this.comments = response.data.map(comment => ({
+                    senderName: comment.sender_name,
+                    text: comment.comment_text
+                }));
+            } catch (error) {
+                console.error('Error fetching comments:', error.response ? error.response.data : error.message);
+                alert('Failed to fetch comments. Please try again later.');
+            }
+        },
+        async addComment() {
+            if (!this.newCommentText.trim()) {
+                alert('Please enter a comment.');
+                return;
+            }
+
+            const commentData = {
+                post_id: this.content.postId,
+                sender_id: this.profile.userId,
+                sender_name: this.profile.name,
+                comment_text: this.newCommentText
+            };
+
+            
+            try {
+                console.log('Sending comment data:', commentData);
+                const response = await api.post('content/comments/add', commentData);
+                console.log('Comment added:', response.data);
+                this.comments.push(response.data);
+                this.newCommentText = '';
+            } catch (error) {
+                console.error('Error adding comment:', error.response ? error.response.data : error.message);
+            }
+        }
+    },
+    mounted() {
+        this.fetchComments();
     }
 };
 </script>
@@ -93,8 +162,23 @@ export default {
 
 .bottom-card {
     display: flex;
+    flex-direction: column;
     align-items: center;
     padding: 10px;
+}
+
+.comments-section {
+    display: flex;
+    flex-direction: column; /* Arrange comments vertically */
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.comment-box {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    width: 100%;
 }
 
 .icon {

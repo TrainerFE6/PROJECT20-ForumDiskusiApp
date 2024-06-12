@@ -22,4 +22,10 @@ router.get('/mypost/:sender_id', post_content.getMyContent);
 // Respon Postingan
 router.post('/response', post_content.addRespond);
 
+// Kirim Komentar Postingan
+router.post('/comments/add', post_content.addRespond);
+
+// Ambil Komentar
+router.get('/comments/:postId', post_content.getRespond)
+
 module.exports = router;
