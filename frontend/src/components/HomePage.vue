@@ -53,8 +53,8 @@
 <script>
 import VueJwtDecode from 'vue-jwt-decode';
 import api from '@/services/Api';
-import Card from '../components/Card.vue';
-import NavBar from '../components/NavBar.vue';
+import Card from './Card.vue';
+import NavBar from './NavBar.vue';
 
 export default {
     name: 'HomePage',
