@@ -1,61 +1,87 @@
 <template>
-    <NavBar /> 
-    <div class="community">
-      <div class="content">
-        <h2>Community Discussions</h2>
-        <div class="create-topic">
-          <h3>Create a New Topic</h3>
-          <input v-model="newTopic.title" placeholder="Title" />
-          <textarea v-model="newTopic.description" placeholder="Description"></textarea>
-          <button @click="createTopic">Create</button>
-        </div>
-        <div class="topics-list">
-          <h3>Topics</h3>
-          <div v-for="(topic, index) in topics" :key="index" class="topic-card">
-            <h4>{{ topic.title }}</h4>
-            <p>{{ topic.description }}</p>
-            <p><strong>Comments:</strong> {{ topic.comments.length }}</p>
-          </div>
+  <NavBar />
+  <div class="community">
+    <div class="content">
+      <h2>Community Discussions</h2>
+      <div class="create-topic">
+        <h3>Create a New Topic</h3>
+        <input v-model="newTopic.sender_name" placeholder="Your Name" />
+        <textarea v-model="newTopic.description" placeholder="Description"></textarea>
+        <button @click="createTopic">Create</button>
+      </div>
+      <div class="topics-list">
+        <h3>Topics</h3>
+        <div v-for="(topic, index) in topics" :key="index" class="topic-card">
+          <h4>{{ topic.sender_name }}</h4>
+          <p>{{ topic.description }}</p>
+          <p><strong>Comments:</strong> {{ topic.comments.length }}</p>
         </div>
       </div>
     </div>
-  </template>
-  
-  <script>
-  import NavBar from './NavBar.vue';
-  
-  export default {
-    name: 'MainCommunity',
-    components: {
-      NavBar,
+  </div>
+</template>
+
+<script>
+import NavBar from './NavBar.vue';
+import api from '@/services/Api';
+import { mapState } from 'vuex';
+
+export default {
+  name: 'MainCommunity',
+  components: {
+    NavBar
+  },
+  data() {
+    return {
+      communityId: null,
+      newTopic: {
+        sender_id: this.userId,
+        sender_name: this.userName,
+        description: ''
+      },
+      topics: []
+    };
+  },
+  computed: {
+    ...mapState({
+      userId: state => state.user.id,
+      userName: state => state.user.name
+    })
+  },
+  created() {
+    this.communityId = this.$route.query.id;
+    this.fetchTopics();
+  },
+  methods: {
+    async fetchTopics() {
+      try {
+        const response = await api.get(`/community/${this.communityId}/topics`);
+        this.topics = response.data.topics;
+      } catch (error) {
+        console.error('Error fetching topics:', error);
+        alert('Failed to fetch topics. Please try again later.');
+      }
     },
-    data() {
-      return {
-        newTopic: {
-          title: '',
-          description: ''
-        },
-        topics: [
-          { title: 'First Topic', description: 'This is the first discussion topic.', comments: [] },
-          { title: 'Second Topic', description: 'This is the second discussion topic.', comments: [] }
-        ]
-      };
-    },
-    methods: {
-      createTopic() {
-        if (this.newTopic.title && this.newTopic.description) {
-          this.topics.push({
-            title: this.newTopic.title,
-            description: this.newTopic.description,
-            comments: []
+    async createTopic() {
+      if (this.newTopic.sender_name && this.newTopic.description) {
+        try {
+          const response = await api.post(`/community/${this.communityId}/topics`, {
+            sender_id: this.newTopic.sender_id,
+            sender_name: this.newTopic.sender_name,
+            description: this.newTopic.description
           });
-          this.newTopic.title = '';
+          this.topics.push(response.data.topic);
           this.newTopic.description = '';
+        } catch (error) {
+          console.error('Error creating topic:', error);
+          alert('Failed to create topic. Please try again later.');
         }
       }
     }
-  };
-  </script>
+  }
+};
+</script>
+
   
   <style>
   .community {

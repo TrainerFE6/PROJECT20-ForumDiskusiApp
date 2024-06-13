@@ -66,7 +66,6 @@ export default {
                 }));
             } catch (error) {
                 console.error('Error fetching comments:', error.response ? error.response.data : error.message);
-                alert('Failed to fetch comments. Please try again later.');
             }
         },
         async addComment() {

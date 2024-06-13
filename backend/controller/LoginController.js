@@ -20,7 +20,7 @@ module.exports = {
                 const isMatch = await bcrypt.compare(password, user.password);
                 if (isMatch) {
                     const payload = { userId: user.user_id, username: user.username };
-                    const token = jwt.sign(payload, config.jwtSecret, { expiresIn: '1h' });
+                    const token = jwt.sign(payload, config.jwtSecret, { expiresIn: '24h' });
                     return res.status(200).json({ message: 'Login successful', token });
                 } else {
                     console.error('Invalid password for user:', email);

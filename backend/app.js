@@ -15,6 +15,7 @@ const sessionRouter = require('./routes/session');
 const loginRoutes = require('./routes/login');
 const registerRoutes = require('./routes/register');
 const postRoutes = require('./routes/post_content');
+const communityRoutes = require('./routes/communities');
 
 // Middleware
 const verifyUser = require('./library/verify');
@@ -50,6 +51,7 @@ app.use('/session', sessionRouter);
 app.use('/register', registerRoutes);
 app.use('/login', loginRoutes);
 app.use('/content', postRoutes);
+app.use('/community', communityRoutes);
 
 // Protect the routes
 app.use('/home', verifyUser.isLogin, (req, res) => {

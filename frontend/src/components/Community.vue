@@ -1,42 +1,86 @@
 <template>
-    <div>
-      <NavBar />
-      <div class="community">
-        <div class="topics-list">
-          <h3>Komunitas</h3>
-          <div class="create-post-input">
-            <img src="./img/pengembangan.png" alt="Pengembangan Diri" class="avatar" />
-            <div class="user-info">
-              <router-link to="/main-community" style="color: black;">
-                <p class="cname">{{Community.title}}</p>
-              </router-link>
-              <p class="desc">{{Community.description}}</p>
-            </div>
-            <button class="follow-btn">Ikuti</button>
+  <div>
+    <NavBar />
+    <div class="community">
+      <div class="topics-list">
+        <h3>Komunitas</h3>
+        <div v-for="(community, index) in communities" :key="index" class="create-post-input">
+          <img src="./img/pengembangan.png" alt="Pengembangan Diri" class="avatar" />
+          <div class="user-info">
+            <p class="cname">{{ community.community_name }}</p>
+            <p class="desc">{{ community.description }}</p>
           </div>
+          <button
+            class="follow-btn"
+            :class="{ followed: community.isFollowed }"
+            @click="toggleFollowCommunity(community)"
+          >
+            {{ community.isFollowed ? 'Buka' : 'Ikuti' }}
+          </button>
         </div>
       </div>
     </div>
-  </template>
-  
-  <script>
-  import NavBar from './NavBar.vue';
-  
-  export default {
-    name: 'Community',
-    components: {
-      NavBar
+  </div>
+</template>
+
+<script>
+import NavBar from './NavBar.vue';
+import api from '@/services/Api';
+
+export default {
+  name: 'CommunityList',
+  components: {
+    NavBar
+  },
+  data() {
+    return {
+      communities: []
+    };
+  },
+  mounted() {
+    this.fetchCommunities();
+  },
+  methods: {
+    async fetchCommunities() {
+      try {
+        const response = await api.get('/community/all');
+        this.communities = response.data;
+        console.log(response.data);
+        await this.checkFollowStatus();
+      } catch (error) {
+        console.error('Error fetching communities:', error);
+        alert('Failed to fetch communities. Please try again later.');
+      }
     },
-    data() {
-      return {
-        Community: {
-          title: 'Pengembangan Diri',
-          description: 'Pengembangan diri menjadi lebih baik setiap harinya'
+    async checkFollowStatus() {
+      for (let community of this.communities) {
+        try {
+          const response = await api.get(`/community/check_follow/${community.community_id}`);
+          community.isFollowed = response.data.isFollowed;
+        } catch (error) {
+          console.error(`Error checking follow status for community ${community.community_id}:`, error);
         }
-      };
+      }
     },
-  };
-  </script>
+    async toggleFollowCommunity(community) {
+      if (community.isFollowed) {
+        // Redirect to main community page
+        this.$router.push({ path: '/main-community', query: { id: community.community_id } });
+      } else {
+        // Follow the community
+        try {
+          await api.post('/community/join', { community_id: community.community_id });
+          community.isFollowed = true;
+        } catch (error) {
+          console.error('Error joining community:', error);
+          alert('Failed to join community. Please try again later.');
+        }
+      }
+    }
+  }
+};
+</script>
+
   
   <style>
   /* Gaya yang diperbarui */
@@ -77,13 +121,17 @@
   }
   
   .follow-btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-  }
+  background-color: #007bff;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.follow-btn.followed {
+  background-color: green;
+}
   
   .follow-btn:hover {
     background-color: #0056b3;
