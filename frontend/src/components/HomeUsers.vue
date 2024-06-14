@@ -68,11 +68,11 @@
                 <div class="user-post">
                     <img src="./image/network.png" >
                 <div>
-                <h1>{{ post.user }}</h1>
+                <h1>{{ post.sender_name }}</h1>
             </div>
         </div>
-          <p>{{ post.description }}</p>
-          <img src="./image/gambar.jpeg" class="contoh-post-img"/>
+          <p>{{ post.content_text }}</p>
+          <!-- <img src="./image/gambar.jpeg" class="contoh-post-img"/> -->
           <div class="post-activity">
               <div class="like" :class="{ 'liked': post.liked }" @click="toggleLike(post)">
                 <button>
@@ -95,11 +95,11 @@
             <input type="text" v-model="post.newComment" placeholder="Tambahkan komentar...">
             <button type="submit">Kirim</button>
           </form>
-          <div class="comments" v-if="post.comments.length > 0">
+          <!-- <div class="comments" v-if="post.comments.length > 0">
             <div class="comment" v-for="(comment, commentIndex) in post.comments" :key="commentIndex">
               <p>{{ comment }}</p>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -107,28 +107,39 @@
   
   <script>
   import api from '@/services/Api';
+  import { mapState } from 'vuex';
+
+  const store = mapState();
 
   export default {
     name: 'ContainerContent',
     data() {
       return {
         newPostContent: '',
-        posts: [
-          {
-            user: 'User 1',
-            description: 'Ini deskripsi',
-            image: './image/gambar.png',
-            likes: 0,
-            liked: false,
-            comments: [],
-            showCommentForm: false,
-            newComment: ''
-          }
-         
-        ]
+        posts: []
       };
     },
+    computed: {
+      ...mapState({
+        userId: state => state.user.id,
+        userName: state => state.user.name
+      })
+    },
+    created() {
+      this.fetchMyPosts();
+    },
     methods: {
+      async fetchMyPosts() {
+        try {
+          console.log(this.userId);
+          const response = await api.get(`/content/mypost/${this.userId}`); // Ganti dengan endpoint yang sesuai
+          this.posts = response.data; // Assign response data to posts array
+          console.log(response.data);
+        } catch (error) {
+          console.error('Error fetching my posts:', error);
+          alert('Failed to fetch posts. Please try again later.');
+        }
+      },
       submitPost() {
         if (this.newPostContent.trim() !== '') {
           this.posts.unshift({
@@ -171,6 +182,7 @@
               await api.post('login/logout'); 
               localStorage.removeItem('token');
               this.$router.push('/login');
+              map
           } catch (error) {
               console.error('Error during logout:', error);
           }

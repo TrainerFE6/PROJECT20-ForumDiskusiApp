@@ -63,7 +63,8 @@ export default {
 
         if (response.status === 200) {
           localStorage.setItem('token', response.data.token);
-          this.$router.push('/home');
+          // this.$router.push('/home');
+          window.location.reload(); // Refresh the page
         } else {
           this.error = 'Login failed! Invalid email or password.';
         }
