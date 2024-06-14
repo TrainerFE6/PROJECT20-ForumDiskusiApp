@@ -23,8 +23,8 @@
                 </div>
             </div>
             <div class="comment-box">
-                <textarea rows="1" class="card-text" v-model="newCommentText" placeholder="Add a comment"></textarea>
-                <button class="send-button" @click="addComment">Add Comment</button>
+                <textarea rows="1" class="card-text" v-model="newCommentText" placeholder="Tulis Komentar"></textarea>
+                <button class="send-button" @click="addComment">Tambah Komentar</button>
             </div>
         </div>
     </div>

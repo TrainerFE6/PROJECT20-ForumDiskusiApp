@@ -24,4 +24,16 @@ router.post('/leave', verifyUser.isLogin, communityController.leaveCommunity);
 // Check follow status
 router.get('/check_follow/:community_id', verifyUser.isLogin, communityController.checkFollowStatus);
 
+// Get All Community Topics
+router.get('/:community_id/topics', verifyUser.isLogin, communityController.getTopicsByCommunityId);
+
+// Post Community Topic
+router.post('/:community_id/topics', verifyUser.isLogin, communityController.addTopic);
+
+// Add Comment
+router.post('/comment/add', verifyUser.isLogin, communityController.addComment);
+
+// Get Comments for Topic
+router.get('/comment/:topic_id', verifyUser.isLogin, communityController.getCommentsByTopic);
+
 module.exports = router;

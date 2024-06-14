@@ -194,6 +194,49 @@ const addTopic = async (req, res) => {
     }
 };
 
+// Add a comment
+const addComment = async (req, res) => {
+const { topic_id, user_id, user_name, comment_text } = req.body;
+
+if (!topic_id || !user_id || !user_name || !comment_text) {
+    return res.status(400).json({ error: 'Missing required fields' });
+}
+
+try {
+    const [result] = await pool.query(
+    `INSERT INTO community_comments (topic_id, user_id, user_name, comment_text, created_at) VALUES (?, ?, ?, ?, NOW())`,
+    [topic_id, user_id, user_name, comment_text]
+    );
+
+    const [comment] = await pool.query(`SELECT * FROM community_comments WHERE id = ?`, [result.insertId]);
+
+    res.status(201).json({
+    message: 'Comment added successfully',
+    comment: comment[0]
+    });
+} catch (error) {
+    console.error('Error adding comment:', error);
+    res.status(500).json({ error: 'Internal server error' });
+}
+};
+
+// Get comments for a topic
+const getCommentsByTopic = async (req, res) => {
+    const { topic_id } = req.params;
+
+    try {
+        const [comments] = await pool.query(
+            `SELECT * FROM community_comments WHERE topic_id = ? ORDER BY created_at DESC`,
+            [topic_id]
+        );
+
+        res.status(200).json({ comments });
+    } catch (error) {
+        console.error('Error fetching comments:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
 module.exports = {
     addCommunity,
     updateCommunity,
@@ -204,4 +247,6 @@ module.exports = {
     checkFollowStatus,
     getTopicsByCommunityId,
     addTopic,
+    addComment,
+    getCommentsByTopic,
 };
