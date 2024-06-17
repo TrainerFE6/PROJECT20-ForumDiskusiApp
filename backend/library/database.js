@@ -9,10 +9,11 @@
 const mysql = require('mysql2');
 
 const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'discussion_forum_app',
+    host: 'educalab.id',
+    user: 'PzTPP938n9uzPOMX',
+    password: 'IAnYYVPf5SOMoA2k',
+    database: 'iEXPXrjIq5fpYiUI',
+    port: 3307,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
